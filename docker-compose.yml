@@ -1,0 +1,41 @@
+version: '3.8'
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ./ollama:/root/.ollama
+    restart: unless-stopped
+    command: serve
+
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecommerce_data
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ollama-network
+
+  scraper:
+    build: .
+    volumes:
+      - ./images:/app/images
+    environment:
+      - DATABASE_URL=postgresql://username:password@db/ecommerce_data
+    depends_on:
+      - db
+      - ollama
+    networks:
+      - ollama-network
+
+networks:
+  ollama-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

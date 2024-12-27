@@ -1,0 +1,10 @@
+pip install django psycopg2
+django-admin startproject ollama_project 
+python manage.py startapp property_info
+********************************************8
+docker exec -it ecommerce_scraper-db-1 bash
+psql -U username -d ecommerce_data
+   or
+docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
+
+SELECT * FROM properties LIMIT 10;
