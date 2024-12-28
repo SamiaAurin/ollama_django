@@ -77,13 +77,22 @@ WSGI_APPLICATION = 'ollama_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'ecommerce_data',  # Your DB name
-        'USER': 'username',        # Your DB username
-        'PASSWORD': 'password',    # Your DB password
-        'HOST': 'db',              # The name of the service in the docker-compose.yml file
-        'PORT': '5432',            # Default PostgreSQL port
-    }
+        'NAME': 'ollama_data',  # Your local database for storing rewritten data
+        'USER': 'username',
+        'PASSWORD': 'password',
+        'HOST': 'ollama-db',  # Refers to the `ollamadb` container
+        'PORT': '5432',
+    },
+    'scraper_db': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecommerce_data',  # External database to fetch titles
+        'USER': 'username',
+        'PASSWORD': 'password',
+        'HOST': 'ecommerce_scraper-db-1',  # Use the hostname of the scraper DB
+        'PORT': '5432',
+    },
 }
+
 
 
 

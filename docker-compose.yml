@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   ollama:
     image: ollama/ollama:latest
@@ -10,32 +9,23 @@ services:
     restart: unless-stopped
     command: serve
 
-  db:
+  ollamadb:
     image: postgres:14
+    container_name: ollama-db
     environment:
       POSTGRES_USER: username
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: ecommerce_data
+      POSTGRES_DB: ollama_data
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - ollama-network
-
-  scraper:
-    build: .
-    volumes:
-      - ./images:/app/images
-    environment:
-      - DATABASE_URL=postgresql://username:password@db/ecommerce_data
-    depends_on:
-      - db
-      - ollama
     networks:
       - ollama-network
 
 networks:
   ollama-network:
     driver: bridge
+  shared-network:
+    external: true  # Use the shared network
 
 volumes:
   postgres_data:
