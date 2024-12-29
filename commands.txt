@@ -50,13 +50,17 @@ psql -U username -d ecommerce_data
    or
 docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
 
-SELECT * FROM properties LIMIT 10;
+SELECT * FROM properties LIMIT 5;
 **************************************
+docker exec -it django python manage.py makemigrations
 docker exec -it django python manage.py migrate
 docker exec -it django python manage.py rewrite_property_titles
-
+******************************************
 docker exec -it ollama-db psql -U username -d ollama_data
 
-SELECT * FROM property_info_property LIMIT 10;
+SELECT * FROM property_info_property LIMIT 5;
 ********************************************************
+docker-compose exec ollama /bin/bash
+ollama list
 ollama pull llama2
+ollama pull phi3

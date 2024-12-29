@@ -1,10 +1,15 @@
-# this is property_info/models.py
+# property_info/models.py
 
 from django.db import models
 
 class Property(models.Model):
-    title = models.CharField(max_length=255)
-    rewritten_title = models.CharField(max_length=255, null=True, blank=True)
+    original_id = models.IntegerField()  # To reference the original ecommerce property
+    original_title = models.CharField(max_length=255)
+    rewritten_title = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'rewritten_properties'
+        
     def __str__(self):
-        return self.title
+        return f"{self.original_title} -> {self.rewritten_title}"

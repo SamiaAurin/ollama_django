@@ -10,7 +10,8 @@ services:
     command: serve
     networks:
       - ollama-network
-      - ecommerce_scraper_default  # Add connection to ecommerce scraper network
+      - ecommerce_scraper_default
+    mem_limit: 6g  # Set a memory limit for the Ollama container
 
   ollamadb:
     image: postgres:14
@@ -37,13 +38,13 @@ services:
       - ollamadb
     networks:
       - ollama-network
-      - ecommerce_scraper_default  # Add connection to ecommerce scraper network
+      - ecommerce_scraper_default
 
 networks:
   ollama-network:
     driver: bridge
-  ecommerce_scraper_default:  # Add this network
-    external: true  # This tells Docker this is an existing network
+  ecommerce_scraper_default:
+    external: true
 
 volumes:
   postgres_data:
