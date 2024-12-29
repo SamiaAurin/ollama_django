@@ -1,32 +1,55 @@
-from django.core.management.base import BaseCommand
-from django.db import connections
+# this is property_info/management/commands/rewrite_property_titles.py
+########################################
+
+
 import requests
+from django.core.management.base import BaseCommand
+from property_info.models import Property  # Corrected import
+from django.db import connections
 
 class Command(BaseCommand):
-    help = "Rewrites property titles using the Ollama model"
+    help = "Rewrite property titles using Ollama model"
 
-    def handle(self, *args, **kwargs):
-        # Fetch data from scraper_db
-        with connections['scraper_db'].cursor() as cursor:
-            cursor.execute("SELECT id, title FROM properties LIMIT 10;")
+    def handle(self, *args, **options):
+        # Connect to the ecommerce database and fetch property titles
+        with connections['ecommerce'].cursor() as cursor:
+            cursor.execute("SELECT id, title FROM properties LIMIT 5")
             properties = cursor.fetchall()
 
-        # Call the Ollama API for each title
-        rewritten_titles = []
+        # Iterate over each property and send it to Ollama for rewriting
         for prop_id, title in properties:
-            prompt = f"Rewrite this property title: '{title}'"
-            response = requests.post(
-                "http://ollama:11434/api/generate",  # Use the Ollama container URL
-                json={"model": "llama2", "prompt": prompt},
-            )
-            rewritten_title = response.json().get("response", "").strip()
-            rewritten_titles.append((prop_id, rewritten_title))
+            try:
+                # Rewrite the title with Ollama
+                rewritten_title = self.rewrite_title_with_ollama(title)
+                
+                # Save the rewritten title back to the property model
+                property_instance = Property.objects.get(id=prop_id)
+                property_instance.rewritten_title = rewritten_title
+                property_instance.save()
 
-        # Save rewritten titles into property_info_property
-        with connections['default'].cursor() as cursor:
-            for prop_id, rewritten_title in rewritten_titles:
-                cursor.execute(
-                    "INSERT INTO property_info_property (property_id, title) VALUES (%s, %s);",
-                    [prop_id, rewritten_title]
-                )
-        self.stdout.write(self.style.SUCCESS("Rewritten titles saved successfully."))
+                self.stdout.write(f"Processed property: {title} -> {rewritten_title}")
+            except Property.DoesNotExist:
+                self.stdout.write(f"Property with ID {prop_id} not found.")
+
+    def rewrite_title_with_ollama(self, title):
+        # Prepare the prompt for Ollama
+        prompt = f"Rewrite the following property title using Phi3: {title}"
+
+        # Make the API request to Ollama
+        response = requests.post(
+            "http://ollama:11434/api/generate",  # The Ollama endpoint
+            json={"prompt": prompt, "model": "phi3"}  # Specify using phi3 model
+        )
+
+        # Handle the response and return the rewritten title
+        if response.status_code == 200:
+            return response.json().get("rewritten_title", title)
+        else:
+            self.stdout.write(f"Error rewriting title: {response.text}")
+            return title
+    
+        
+
+##########################################
+# Run with:
+# docker-compose exec django python manage.py rewrite_property_titles

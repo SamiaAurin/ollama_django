@@ -1,3 +1,5 @@
+# this is property_info/models.py
+
 from django.db import models
 
 class Property(models.Model):

@@ -8,6 +8,9 @@ services:
       - ./ollama:/root/.ollama
     restart: unless-stopped
     command: serve
+    networks:
+      - ollama-network
+      - ecommerce_scraper_default  # Add connection to ecommerce scraper network
 
   ollamadb:
     image: postgres:14
@@ -21,11 +24,26 @@ services:
     networks:
       - ollama-network
 
+  django:
+    build: .
+    container_name: django
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_DB_URL=postgresql://username:password@ollama-db/ollama_data
+      - ECOMMERCE_DB_URL=postgresql://username:password@ecommerce_scraper-db-1/ecommerce_data
+    depends_on:
+      - ollama
+      - ollamadb
+    networks:
+      - ollama-network
+      - ecommerce_scraper_default  # Add connection to ecommerce scraper network
+
 networks:
   ollama-network:
     driver: bridge
-  shared-network:
-    external: true  # Use the shared network
+  ecommerce_scraper_default:  # Add this network
+    external: true  # This tells Docker this is an existing network
 
 volumes:
   postgres_data:

@@ -2,10 +2,16 @@ pip install django psycopg2
 django-admin startproject ollama_project 
 python manage.py startapp property_info
 ********************************************
+We will create a Django CLI applica on to re-write property information on using Ollama.
 1. Use any model from Ollama 
 2. Read property title prepare a prompt to re-write title and using selected Ollama model 
-
-(venv) PS D:\W3\ollama_django> docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
+Acceptance criteria   
+1. Use Django CLI  
+2. Use postgres 
+3. Use Django ORM 
+4. Use Ollama Model is must
+***************************************************
+docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
 psql (14.15 (Debian 14.15-1.pgdg120+1))
 Type "help" for help.
 
@@ -45,3 +51,12 @@ psql -U username -d ecommerce_data
 docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
 
 SELECT * FROM properties LIMIT 10;
+**************************************
+docker exec -it django python manage.py migrate
+docker exec -it django python manage.py rewrite_property_titles
+
+docker exec -it ollama-db psql -U username -d ollama_data
+
+SELECT * FROM property_info_property LIMIT 10;
+********************************************************
+ollama pull llama2
