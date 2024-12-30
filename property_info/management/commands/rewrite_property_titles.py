@@ -9,7 +9,7 @@ from django.db import connections
 from property_info.models import Property
 
 class Command(BaseCommand):
-    help = "Rewrite property titles using Ollama model and save to ollama database"
+    help = "Change property titles using Ollama model and save to ollama database"
 
     def handle(self, *args, **options):
         # Connect to the ecommerce database and fetch property titles
