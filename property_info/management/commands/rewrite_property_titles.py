@@ -37,7 +37,7 @@ class Command(BaseCommand):
 
     def rewrite_title_with_ollama(self, title):
         prompt = (
-            "As an e-commerce expert, please rewrite the following product title "
+            "As an e-commerce expert, please change the following product title to make it unique"
             "to be more engaging and SEO-friendly while maintaining accuracy: "
             f"'{title}'"
         )
@@ -45,9 +45,9 @@ class Command(BaseCommand):
         response = requests.post(
             "http://ollama:11434/api/generate",
             json={
-                "model": "phi3",  # Using mistral instead of phi3
+                "model": "phi",  # Using mistral instead of phi
                 "prompt": prompt,
-                "system": "You are an e-commerce product title optimization expert. Respond with only the rewritten title, no explanations."
+                "system": "You are an e-commerce product title optimization expert. Respond with only the modified and changed title, no explanations."
             }
         )
 

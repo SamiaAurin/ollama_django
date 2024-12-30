@@ -43,6 +43,10 @@ This properties table is another container and my new ollama related project is 
 (venv) PS D:\W3\ollama_django> docker network create shared-network
 0d1fdcff7434275bcc50774870346f58a21cdb2d723623e826bfbb8b0722b687
 (venv) PS D:\W3\ollama_django>
+------------------ Office ------------------------
+(venv) w3e55@w3e55:~/Assignments/ollama_django$ docker network create shared-network
+d516e23e35d7c91bbc1010008be55def93ee1a361972977ce67ed3021675d7c2
+(venv) w3e55@w3e55:~/Assignments/ollama_django$ 
 
 +++++++++++++++++++++++++++++++++++
 docker exec -it ecommerce_scraper-db-1 bash
@@ -52,13 +56,14 @@ docker exec -it ecommerce_scraper-db-1 psql -U username -d ecommerce_data
 
 SELECT * FROM properties LIMIT 5;
 **************************************
+docker-compose restart django
 docker exec -it django python manage.py makemigrations
 docker exec -it django python manage.py migrate
 docker exec -it django python manage.py rewrite_property_titles
 ******************************************
 docker exec -it ollama-db psql -U username -d ollama_data
 
-SELECT * FROM property_info_property LIMIT 5;
+SELECT * FROM rewritten_properties LIMIT 5;
 ********************************************************
 docker-compose exec ollama /bin/bash
 ollama list
